@@ -61,7 +61,6 @@ jobs:
            image: ${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
            flags: |
              --allow-unauthenticated
-             --no-traffic
              --max-instances=20
              --min-instances=1
              --ingress=internal-and-cloud-load-balancing
