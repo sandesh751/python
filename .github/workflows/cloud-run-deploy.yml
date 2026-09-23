@@ -58,7 +58,7 @@ jobs:
          with:
            service: ${{ env.SERVICE_NAME }}
            region: ${{ env.REGION }}
-           image: ${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+           image: ${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
            flags: |
              --allow-unauthenticated
              --max-instances=20
