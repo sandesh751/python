@@ -1,0 +1,79 @@
+name: Production cicd with cloud-run (WIF)
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  PROJECT_ID: project-3d4fd68e-9492-4690-aa8
+  REGION: asia-south1
+  AR_URL: asia-south1-docker.pkg.dev/project-3d4fd68e-9492-4690-aa8/images-to-run
+  IMAGE_NAME: cloud-image
+  SERVICE_NAME: my-cloud-run
+  WIF_PROVIDER: projects/511846968460/locations/global/workloadIdentityPools/github-identity/providers/github 
+  WIF_SERVICE_ACCOUNT: cloud-run-manager@project-3d4fd68e-9492-4690-aa8.iam.gserviceaccount.com
+
+
+jobs:
+  build-and-deploy:
+     name: Build, Push and Canary Deploy
+     runs-on: ubuntu-latest
+     
+     steps:
+       - name: checkout-code
+         uses: actions/checkout@v4
+
+       - name: Authenticate to Google Cloud via WIF
+         uses: google-github-actions/auth@v4
+         with:
+           workload_identity_provider: ${{ env. WIF_PROVIDER }}
+           service_account: ${{ env.WIF_SERVICE_ACCOUNT }}
+
+       - name: cloud SDK setup
+         uses: google-github-actions/setup-gcloud@v4
+
+       - name: docker login to artfact-registory
+         run: |- 
+           gcloud auth configure-docker ${{ env.AR_URL }} --quiet
+
+       - name: build docker image
+         run: |-
+           docker build \
+             -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest" \
+             -t -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" ./
+
+       - name: push container image to artifact
+         run: |-
+           docker push "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+           docker push "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest"
+
+       - name:  Deploy to Cloud Run (No Traffic Switch)
+         uses: google-github-actions/deploy-cloudrun@v2
+         with:
+           service: ${{ env.SERVICE_NAME }}
+           region: ${{ env.REGION }}
+           image: ${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+           flags: |
+             --no-traffic
+             --max-instances=20
+             --min-instances=1
+             --ingress=internal-and-cloud-load-balancing
+            
+       # 8. Canary Testing  switch 10% traffic on new version  
+       - name: Route 10% Traffic to New Revision
+         run: |-
+           gcloud run services update-traffic ${{ env.SERVICE_NAME }} \
+           --region=${{ env.REGION }} \
+           --to-revisions=LATEST=10
+           
+         
+             
+       
+         
+
+  
