@@ -1,0 +1,20 @@
+name: new testing 
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: 
+  contents: read
+  id-token: write
+
+jobs:
+  new-testing:
+    name: sandesh
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: code
+        uses: checkout-code
+        
