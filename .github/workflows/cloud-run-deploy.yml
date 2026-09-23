@@ -13,6 +13,7 @@ env:
   PROJECT_ID: project-3d4fd68e-9492-4690-aa8
   REGION: asia-south1
   AR_URL: asia-south1-docker.pkg.dev
+  REPO_NAME: image-to-run
   IMAGE_NAME: cloud-image
   SERVICE_NAME: my-cloud-run
   WIF_PROVIDER: projects/511846968460/locations/global/workloadIdentityPools/github-identity/providers/github 
@@ -44,13 +45,13 @@ jobs:
        - name: build docker image
          run: |-
            docker build \
-             -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest" \
-             -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" ./
+             -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest" \
+             -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" ./
 
        - name: push container image to artifact
          run: |-
-           docker push "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-           docker push "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest"
+           docker push "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+           docker push "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest"
 
        - name:  Deploy to Cloud Run (No Traffic Switch)
          uses: google-github-actions/deploy-cloudrun@v2
