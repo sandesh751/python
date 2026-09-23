@@ -45,7 +45,7 @@ jobs:
          run: |-
            docker build \
              -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest" \
-             -t -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" ./
+             -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" ./
 
        - name: push container image to artifact
          run: |-
