@@ -60,6 +60,7 @@ jobs:
            region: ${{ env.REGION }}
            image: ${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
            flags: |
+             --allow-unauthenticated
              --no-traffic
              --max-instances=20
              --min-instances=1
