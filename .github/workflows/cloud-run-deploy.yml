@@ -13,7 +13,7 @@ env:
   PROJECT_ID: project-3d4fd68e-9492-4690-aa8
   REGION: asia-south1
   AR_URL: asia-south1-docker.pkg.dev
-  REPO_NAME: image-to-run
+  REPO_NAME: images-to-run
   IMAGE_NAME: cloud-image
   SERVICE_NAME: my-cloud-run
   WIF_PROVIDER: projects/511846968460/locations/global/workloadIdentityPools/github-identity/providers/github 
