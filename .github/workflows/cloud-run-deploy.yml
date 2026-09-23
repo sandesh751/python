@@ -67,11 +67,11 @@ jobs:
              --ingress=internal-and-cloud-load-balancing
             
        # 8. Canary Testing  switch 10% traffic on new version  
-       - name: Route 10% Traffic to New Revision
+       - name: Route 100% Traffic to New Revision
          run: |-
            gcloud run services update-traffic ${{ env.SERVICE_NAME }} \
            --region=${{ env.REGION }} \
-           --to-revisions=LATEST=10
+           --to-revisions=LATEST=100
            
          
              
