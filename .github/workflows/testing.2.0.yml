@@ -1,20 +1,69 @@
-name: new testing 
+name: testing-2.0
 
 on:
   push:
     branches:
       - main
 
-permissions: 
-  contents: read
+permissions:
   id-token: write
+  contents: read
+
+env:
+  PROJECT_ID: project-3d4fd68e-9492-4690-aa8
+  REGION: us-central1
+  IMAGE_NAME: new-image
+  AR_URL: ssjsjssh
+  REPO_NAME: sjsisi
+  SERVICE_NAME: sisjisj
+  WORKLOAD_IDENTITY_PROVIDER: uhuih
+  SERVICE_ACCOUNT: uyihni
 
 jobs:
-  new-testing:
-    name: sandesh
+  deploy-to-cloud-run:
+    name: testing
     runs-on: ubuntu-latest
 
     steps:
-      - name: code
-        uses: checkout-code
+    - name: checkout code
+      uses: actions/checkout@v4
+    
+    - name: authentication to google cloud
+      uses: google-github-actions/auth@v2
+      with:
+        work_load_identity_provider: ${{ env. WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ env.SERVICE_ACCOUNT }}
+
+    - name: google SDK setup
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: docker login to AR
+      run: |-
+        gloud auth cofigure-docker ${{ env.AR_URL }} --quiet
+
+    - name: build image
+      run: |-
+        docker build \
+          -t "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest"          
+          -t  "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+    - name: ppush images to AR
+      run: |-
+        docker push  "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+        docker push  "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest"
+    - name: deploy to cloud run
+      uses: google-github-actions/deploy-cloudrun@v2
+      with:
+        service: my-cloud-run
+        region: us-central1
+        image:  "${{ env.AR_URL }}/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+        flags:
+          --port=5000
+          --max-instances=20
+          --min-instances=1
+          --ingress=internal-and-cloud-load-balancing
         
+        
+        
+           
+  
+  
