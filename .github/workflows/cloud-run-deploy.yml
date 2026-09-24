@@ -13,7 +13,7 @@ env:
   PROJECT_ID: project-3d4fd68e-9492-4690-aa8
   REGION: us-central1
   AR_URL: us-central1-docker.pkg.dev
-  REPO_NAME: images-store
+  REPO_NAME: image-store
   IMAGE_NAME: testing-image
   SERVICE_NAME: my-cloud-run
   WIF_PROVIDER: projects/511846968460/locations/global/workloadIdentityPools/external-peoples/providers/github 
