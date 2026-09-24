@@ -11,8 +11,8 @@ permissions:
 
 env:
   PROJECT_ID: project-3d4fd68e-9492-4690-aa8
-  REGION: us-central1
-  AR_URL: us-central1-docker.pkg.dev
+  REGION: asia-south1
+  AR_URL: asia-south1-docker.pkg.dev
   REPO_NAME: image-store
   IMAGE_NAME: testing-image
   SERVICE_NAME: my-cloud-run
